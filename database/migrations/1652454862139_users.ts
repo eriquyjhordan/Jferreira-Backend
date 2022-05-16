@@ -12,6 +12,7 @@ export default class Users extends BaseSchema {
       table.string('phone')
       table.string('avatar')
       table.boolean('is_active').defaultTo(true)
+      table.string('type').notNullable().defaultTo('user')
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

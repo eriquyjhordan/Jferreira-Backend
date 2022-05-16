@@ -31,6 +31,9 @@ export default class Users extends BaseModel {
     }
   }
 
+  @column()
+  public type: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

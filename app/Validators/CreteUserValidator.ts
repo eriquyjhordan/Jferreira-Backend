@@ -30,6 +30,7 @@ export default class CreteUserValidator {
     phone: schema.string.optional([rules.mobile({ locale: ['pt-BR'] })]),
     avatar: schema.string.optional(),
     isActive: schema.boolean.optional(),
+    type: schema.string.optional([rules.userType()]),
   })
 
   /**
