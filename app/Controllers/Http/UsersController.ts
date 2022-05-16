@@ -17,10 +17,12 @@ export default class UsersController {
     })
     return response.status(201).json(user)
   }
+
   public async index({ response }: HttpContextContract) {
     const users = await Users.all()
     return response.status(200).json(users)
   }
+
   public async update({ request, response }: HttpContextContract) {
     const userId = request.param('id')
     const user = await Users.findBy('id', userId)
