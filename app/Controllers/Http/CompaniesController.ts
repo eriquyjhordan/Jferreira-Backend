@@ -63,4 +63,23 @@ export default class CompaniesController {
       company,
     })
   }
+
+  public async index({ response, auth }: HttpContextContract) {
+    const user = await auth.user
+    if (user.$attributes.type !== 'admin')
+      throw new BadResquestException("You don't have permission to do this operation", 401)
+    const companies = await Company.all()
+    const companiesWithAddress = await Promise.all(
+      companies.map(async (company) => {
+        const address = await company.related('address').query().first()
+        return {
+          ...company.$attributes,
+          address: address ? address.$attributes : null,
+        }
+      })
+    )
+    return response.json({
+      companiesWithAddress,
+    })
+  }
 }
