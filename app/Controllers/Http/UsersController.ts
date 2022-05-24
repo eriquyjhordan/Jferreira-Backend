@@ -20,7 +20,7 @@ export default class UsersController {
 
   public async index({ response, auth }: HttpContextContract) {
     const user = auth.user
-    if (user?.$extras.type !== 'admin')
+    if (user?.$attributes.type !== 'admin')
       throw new BadResquestException('You are not allowed to see all user', 401)
     const users = await Users.all()
     return response.status(200).json(users)
