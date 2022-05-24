@@ -1,6 +1,7 @@
-import { DateTime } from 'luxon'
-import { BaseModel, beforeSave, column } from '@ioc:Adonis/Lucid/Orm'
 import Hash from '@ioc:Adonis/Core/Hash'
+import { BaseModel, beforeSave, column, hasOne, HasOne } from '@ioc:Adonis/Lucid/Orm'
+import Company from 'App/Models/Company'
+import { DateTime } from 'luxon'
 
 export default class Users extends BaseModel {
   @column({ isPrimary: true })
@@ -23,6 +24,11 @@ export default class Users extends BaseModel {
 
   @column()
   public isActive: boolean
+
+  @hasOne(() => Company, {
+    foreignKey: 'userId',
+  })
+  public company: HasOne<typeof Company>
 
   @beforeSave()
   public static async hashPassword(user: Users) {
