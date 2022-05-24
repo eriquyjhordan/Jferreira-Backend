@@ -15,6 +15,7 @@ export default class Companies extends BaseSchema {
       table.dateTime('registration_date')
       table.dateTime('first_purchase')
       table.dateTime('last_purchase')
+      table.uuid('user_id').references('id').inTable('users')
       table.dateTime('created_at', { useTz: true })
       table.dateTime('updated_at', { useTz: true })
     })

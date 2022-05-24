@@ -1,5 +1,6 @@
-import { BaseModel, column, hasOne, HasOne } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, belongsTo, BelongsTo, column, hasOne, HasOne } from '@ioc:Adonis/Lucid/Orm'
 import Address from 'App/Models/Address'
+import Users from 'App/Models/Users'
 import { DateTime } from 'luxon'
 
 export default class Company extends BaseModel {
@@ -32,6 +33,14 @@ export default class Company extends BaseModel {
 
   @column({ columnName: 'last_purchase' })
   public lastPurchase: DateTime
+
+  @column({ columnName: 'user_id' })
+  public userId: string
+
+  @belongsTo(() => Users, {
+    foreignKey: 'userId',
+  })
+  public user: BelongsTo<typeof Users>
 
   @hasOne(() => Address, {
     foreignKey: 'companyId',
