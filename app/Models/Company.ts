@@ -1,3 +1,4 @@
+import Product from 'App/Models/Product'
 import { BaseModel, belongsTo, BelongsTo, column, hasOne, HasOne } from '@ioc:Adonis/Lucid/Orm'
 import Address from 'App/Models/Address'
 import Users from 'App/Models/Users'
@@ -52,6 +53,11 @@ export default class Company extends BaseModel {
     foreignKey: 'companyId',
   })
   public address: HasOne<typeof Address>
+
+  @hasOne(() => Product, {
+    foreignKey: 'providerId',
+  })
+  public product: HasOne<typeof Product>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
