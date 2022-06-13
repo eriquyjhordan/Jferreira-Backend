@@ -1,10 +1,10 @@
+import BadResquestException from 'App/Exceptions/BadResquestException'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { v4 as uuid } from 'uuid'
 import Product from 'App/Models/Product'
 
 export default class ProductsController {
   public async create({ request, response }: HttpContextContract) {
-    const productId = uuid()
     const data = request.only([
       'name',
       'code',
@@ -23,6 +23,9 @@ export default class ProductsController {
       'ipi',
       'providerId',
     ])
+    const productAlreadyExists = await Product.findBy('code', data.code)
+    if (productAlreadyExists) throw new BadResquestException('Product already exists', 409)
+    const productId = uuid()
     const product = await Product.create({
       id: productId,
       ...data,
