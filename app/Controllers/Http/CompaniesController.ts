@@ -11,6 +11,7 @@ export default class CompaniesController {
   }
 
   private validateDocument(document: string) {
+    if (!document) return null
     const documentWithoutDots = document.replace(/\./g, '').replace(/\s/g, '').replace(/\//g, '')
     if (documentWithoutDots.length === 11) {
       if (cpf.isValid(documentWithoutDots)) return documentWithoutDots
@@ -72,14 +73,65 @@ export default class CompaniesController {
     const companiesWithAddress = await Promise.all(
       companies.map(async (company) => {
         const address = await company.related('address').query().first()
+        const associateUser = await company.related('user').query().first()
+        if (associateUser) {
+          delete associateUser.$attributes.password
+        }
         return {
           ...company.$attributes,
           address: address ? address.$attributes : null,
+          user: associateUser ? associateUser.$attributes : null,
         }
       })
     )
     return response.json({
       companiesWithAddress,
+    })
+  }
+
+  public async update({ request, response, params, auth }: HttpContextContract) {
+    const user = await auth.user
+    if (user.$attributes.type !== 'admin')
+      throw new BadResquestException("You don't have permission to do this operation", 401)
+    const company = await Company.findOrFail(params.id)
+    let data = request.only([
+      'person_type',
+      'document',
+      'name',
+      'ie',
+      'type',
+      'registration_date',
+      'first_purchase',
+      'last_purchase',
+      'user_id',
+      'address',
+      'status',
+    ])
+    if (data.document) data.document = this.validateDocument(data.document)
+    const registrationDate = this.convertDate(data.registration_date)
+    const firstPurchase = this.convertDate(data.first_purchase)
+    const lastPurchase = this.convertDate(data.last_purchase)
+    const address = data.address
+    data = {
+      ...data,
+      registration_date: registrationDate,
+      first_purchase: firstPurchase,
+      last_purchase: lastPurchase,
+    }
+    delete data.address
+    await company.merge(data).save()
+
+    if (address) {
+      const addressData = {
+        ...address,
+        company_id: company.id,
+      }
+      await company.related('address').query().delete()
+      await company.related('address').create(addressData)
+    }
+    await company.refresh()
+    return response.json({
+      company,
     })
   }
 }
