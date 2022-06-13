@@ -26,6 +26,12 @@ export default class Company extends BaseModel {
   public type: string
 
   @column()
+  public phone: string
+
+  @column()
+  public email: string
+
+  @column()
   public registrationDate: DateTime
 
   @column({ columnName: 'first_purchase' })

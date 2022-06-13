@@ -37,6 +37,8 @@ export default class CompaniesController {
       'last_purchase',
       'user_id',
       'address',
+      'phone',
+      'email',
     ])
     data.document = this.validateDocument(data.document)
     const registrationDate = this.convertDate(data.registration_date)
@@ -74,6 +76,7 @@ export default class CompaniesController {
       companies.map(async (company) => {
         const address = await company.related('address').query().first()
         const associateUser = await company.related('user').query().first()
+        delete company.$attributes.userId
         if (associateUser) {
           delete associateUser.$attributes.password
         }
@@ -106,6 +109,8 @@ export default class CompaniesController {
       'user_id',
       'address',
       'status',
+      'phone',
+      'email',
     ])
     if (data.document) data.document = this.validateDocument(data.document)
     const registrationDate = this.convertDate(data.registration_date)
